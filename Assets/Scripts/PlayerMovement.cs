@@ -18,44 +18,44 @@ public class PlayerMovement : MonoBehaviour
 
     void Start()
     {
-        anim = GetComponentInChildren<Animator>(); //Animator on the Pig 
+        anim = GetComponentInChildren<Animator>();
     }
 
-    void OnMove(InputValue value) //Runs when the player presses a WASD key
+    void OnMove(InputValue value)
     {
         Vector2 input = value.Get<Vector2>();
-        anim.SetBool("IsWalking", input != Vector2.zero); //Plays Walk when moving and Idle when not moving
+        anim.SetBool("IsWalking", input != Vector2.zero);
         Vector2 direction = Vector2.zero;
 
-        if (Mathf.Abs(input.x) > Mathf.Abs(input.y)) //Checks whether horizontal input is >
+        if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
         {
-            direction = new Vector2(Mathf.Sign(input.x), 0); //Sets the direction to left or right
+            direction = new Vector2(input.x, 0);
         }
-        else if (input.y != 0) //Checks whether vertical input was pressed
+        else if (input.y != 0)
         {
-            direction = new Vector2(0, Mathf.Sign(input.y)); //Sets the direction to up or down
+            direction = new Vector2(0, input.y);
         }
 
-        if (direction != Vector2.zero) //Checks whether a direction was pressed
+        if (direction != Vector2.zero)
         {
             Move(direction);
         }
     }
 
-    void Move(Vector2 direction) //Moves the player one tile
+    void Move(Vector2 direction)
     {
         Vector3 targetPosition = transform.position + (Vector3)direction;
 
-        Vector3Int targetCell = walls.WorldToCell(targetPosition); //Converts the position into a tilemap cell
+        Vector3Int targetCell = walls.WorldToCell(targetPosition);
 
         if (walls.HasTile(targetCell) || obstacles.HasTile(targetCell))
         {
             return;
         }
 
-        Collider2D crate = Physics2D.OverlapPoint(targetPosition, crateLayer); //Checks whether a crate is in the next tile
+        Collider2D crate = Physics2D.OverlapPoint(targetPosition, crateLayer);
 
-        if (crate != null) //If player found a crate
+        if (crate != null)
         {
             Vector3 crateTargetPosition = crate.transform.position + (Vector3)direction;
 
@@ -73,11 +73,11 @@ public class PlayerMovement : MonoBehaviour
         transform.position = targetPosition;
     }
 
-    void CheckWinCondition() //Checks if all crates are on targets
+    void CheckWinCondition()
     {
-        for (int i = 0; i < 2; i++) //Loop through first and second crate
+        for (int i = 0; i < 2; i++)
         {
-            if (i == 1 && !hasSecondCrate) //does this level only has one crate?
+            if (i == 1 && !hasSecondCrate)
             {
                 break;
             }
@@ -94,7 +94,7 @@ public class PlayerMovement : MonoBehaviour
 
             Vector3Int crateCell = targets.WorldToCell(crate.position);
 
-            if (!targets.HasTile(crateCell)) //Is crate on a target tile?
+            if (!targets.HasTile(crateCell))
             {
                 return;
             }
@@ -103,14 +103,13 @@ public class PlayerMovement : MonoBehaviour
         winPanel.SetActive(true);
     }
 
-    public void OnRestart(InputValue value) //Runs when the player presses R
+    public void OnRestart(InputValue value)
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    public void OnBacktoMain(InputValue value) //Runs when the player presses M
+    public void OnBacktoMain(InputValue value)
     {
         SceneManager.LoadScene("MainMenu");
     }
 }
-
